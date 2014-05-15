@@ -1,0 +1,23 @@
+{
+  "name": "pagerduty-incidents",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "pagerduty-incidents": "./bin/incidents.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mapbox/pagerduty-incidents.git"
+  },
+  "author": "Mapbox",
+  "license": "BSD",
+  "dependencies": {
+    "optimist": "~0.6.0",
+    "underscore": "~1.5.2",
+    "superenv": "0.0.1",
+    "request": "2.34.0",
+    "colors": "0.6.2",
+    "queue-async": "1.0.x"
+  }
+}
