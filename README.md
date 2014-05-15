@@ -8,7 +8,7 @@ As a readable stream:
 var Pagerduty = require('pagerduty');
 var pd = new Pagerduty('mySubdomain', 'myToken');
 
-var EventStream = pd.stream('triggered', 'ServiceA,ServiceB', 10000)
+var EventStream = pd.stream(['triggered'], ['ServiceA', 'ServiceB'], 10000)
     .on('data', function(incident) {
         console.log('got incident');
         console.log(incident);
