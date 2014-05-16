@@ -41,6 +41,7 @@ pagerduty.prototype.stream = function(status, services, interval) {
 };
 
 pagerduty.prototype.getIncidents = function(status, services, cb) {
+    if ('string' != typeof status) status = status.toString();
     var that = this;
     // Resolve service names to ids
     this.getServiceIds(services, function(err, ids) {
@@ -52,7 +53,7 @@ pagerduty.prototype.getIncidents = function(status, services, cb) {
             'Authorization': 'Token token=' + that.token,
           },
           qs: {
-            status: status.toString(),
+            status: status,
             service: ids.toString()
           },
         };
@@ -67,6 +68,7 @@ pagerduty.prototype.getIncidents = function(status, services, cb) {
 };
 
 pagerduty.prototype.getServiceIds = function(names, cb) {
+    if ('string' == typeof names) names = names.split(',');
     var params = {
         url: 'https://' + this.subdomain + '.pagerduty.com/api/v1/services',
         json: true,
