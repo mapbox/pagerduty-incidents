@@ -1,6 +1,6 @@
 {
   "name": "pagerduty-incidents",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -16,6 +16,6 @@
     "optimist": "~0.6.0",
     "underscore": "~1.5.2",
     "superenv": "0.0.1",
-    "request": "2.34.0"
+    "request": "2.51.0"
   }
 }
