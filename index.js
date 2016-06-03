@@ -97,6 +97,10 @@ pagerduty.prototype.getServiceIds = function(names, cb) {
         headers: {
             'Authorization': 'Token token=' + this.token,
         },
+        qs: {
+            //Currently we have 52 incidents in all, but the PagerDuty API limits by default to 25.
+            limit: 100
+        }
     };
     request(params, function (err, res, data) {
         if (err) return cb(err);
