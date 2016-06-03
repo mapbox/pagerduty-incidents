@@ -82,19 +82,38 @@ pagerduty.prototype.getIncidents = function(options, services, cb) {
         }
     });
 
+    if (services.names) {
     // Resolve service names to ids
-    this.getServiceIds(services, function(err, ids) {
+        this.getServiceIds(services.names, function(err, ids) {
 
-        if (err) return cb(err);
+            if (err) return cb(err);
 
-        qs.service = (typeof ids != 'string') ? ids.toString() : ids;
+            qs.service = (typeof ids != 'string') ? ids.toString() : ids;
+            var params = {
+                url: that.url + 'incidents',
+                json: true,
+                headers: {
+                    'Authorization': 'Token token=' + that.token
+                },
+                qs: qs
+            };
+            request(params, function (err, res, data) {
+                if (err) return cb(err);
+                if (res.statusCode != 200) {
+                    return cb(new Error('Bad status code: ' + res.statusCode));
+                }
+                cb(null, data.incidents);
+            });
+        });
+    } else {
+        qs.service = (typeof services.ids != 'string') ? services.ids.toString() : services.ids;
         var params = {
-          url: that.url + 'incidents',
-          json: true,
-          headers: {
-            'Authorization': 'Token token=' + that.token,
-          },
-          qs: qs
+            url: this.url + 'incidents',
+            json: true,
+            headers: {
+                'Authorization': 'Token token=' + this.token
+            },
+            qs: qs
         };
         request(params, function (err, res, data) {
             if (err) return cb(err);
