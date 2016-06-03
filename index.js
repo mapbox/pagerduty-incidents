@@ -29,7 +29,7 @@ pagerduty.prototype.stream = function(options, services, interval) {
             for (var i = 0; i < incidents.length; i++) {
                 var incident = incidents[i];
                 if (!seen[incident.id]) {
-                    stream.push(incident);
+                    stream.push(JSON.stringify(incident, null, 2));
                     seen[incident.id] = true;
                 }
             }
