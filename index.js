@@ -41,6 +41,23 @@ pagerduty.prototype.stream = function(options, services, interval) {
     return stream;
 };
 
+pagerduty.prototype.getIncidentNotes = function(ID, cb) {
+    var params = {
+        url: this.url + 'incidents/' + ID + '/notes',
+        json: true,
+        headers: {
+            'Authorization': 'Token token=' + that.token,
+        }
+    };
+    request(params, function (err, res, data) {
+        if (err) return cb(err);
+        if (res.statusCode !== 200) {
+            return cb(new Error('Bad status code: ' + res.statusCode));
+        }
+        cb(null, data);
+    });
+};
+
 pagerduty.prototype.getIncidents = function(options, services, cb) {
     var that = this;
     var qs = {
