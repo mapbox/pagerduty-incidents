@@ -11,7 +11,7 @@ var pagerduty = function(subdomain, token) {
 
 module.exports = pagerduty;
 
-pagerduty.prototype.stream = function(status, services, interval) {
+pagerduty.prototype.stream = function(options, services, interval) {
     var that = this;
     var stream = new Readable({objectMode: true});
     var seen = {};
@@ -24,7 +24,7 @@ pagerduty.prototype.stream = function(status, services, interval) {
 
     var query = function() {
         calling = true;
-        that.getIncidents(status, services, function(err, incidents) {
+        that.getIncidents(options, services, function(err, incidents) {
             if (err) return stream.emit('error', err);
             for (var i = 0; i < incidents.length; i++) {
                 var incident = incidents[i];
