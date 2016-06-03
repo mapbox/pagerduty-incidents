@@ -41,12 +41,12 @@ pagerduty.prototype.stream = function(options, services, interval) {
     return stream;
 };
 
-pagerduty.prototype.getIncidentNotes = function(ID, cb) {
+pagerduty.prototype.getIncidentNotes = function (ID, cb) {
     var params = {
         url: this.url + 'incidents/' + ID + '/notes',
         json: true,
         headers: {
-            'Authorization': 'Token token=' + that.token,
+            'Authorization': 'Token token=' + this.token
         }
     };
     request(params, function (err, res, data) {
@@ -122,7 +122,8 @@ pagerduty.prototype.getIncidents = function(options, services, cb) {
             }
             cb(null, data.incidents);
         });
-    });
+
+    }
 };
 
 pagerduty.prototype.getServiceIds = function(names, cb) {
@@ -131,7 +132,7 @@ pagerduty.prototype.getServiceIds = function(names, cb) {
         url: this.url + 'services',
         json: true,
         headers: {
-            'Authorization': 'Token token=' + this.token,
+            'Authorization': 'Token token=' + this.token
         },
         qs: {
             //Currently we have 52 incidents in all, but the PagerDuty API limits by default to 25.
