@@ -40,11 +40,32 @@ pagerduty.prototype.stream = function(status, services, interval) {
     return stream;
 };
 
-pagerduty.prototype.getIncidents = function(status, services, cb) {
-    if ('string' != typeof status) status = status.toString();
+pagerduty.prototype.getIncidents = function(options, services, cb) {
+    var qs = {
+        'status': 'acknowledged,triggered',
+        'sort_by': 'created_on:desc'
+    };
+    _.keys(options).forEach(function(key) {
+        switch (key.toString) {
+        case 'status':
+            if (typeof options[key] != 'string') {
+                options[key] = options[key].toString();
+            }
+            qs.status = options[key];
+            break;
+        case 'incident_key':
+            qs.incident_key = options[key];
+            break;
+        case 'sort_by':
+            qs.sort_by = options[key];
+            break;
+        }
+    });
+
     var that = this;
     // Resolve service names to ids
     this.getServiceIds(services, function(err, ids) {
+        qs.service = ids.toString();
         if (err) return cb(err);
         var params = {
           url: 'https://' + that.subdomain + '.pagerduty.com/api/v1/incidents',
@@ -52,10 +73,7 @@ pagerduty.prototype.getIncidents = function(status, services, cb) {
           headers: {
             'Authorization': 'Token token=' + that.token,
           },
-          qs: {
-            status: status,
-            service: ids.toString()
-          },
+          qs: qs
         };
         request(params, function (err, res, data) {
             if (err) return cb(err);
