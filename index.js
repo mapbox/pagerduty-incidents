@@ -42,9 +42,11 @@ pagerduty.prototype.stream = function(options, services, interval) {
 };
 
 pagerduty.prototype.getIncidents = function(options, services, cb) {
+    var that = this;
     var qs = {
         'status': 'acknowledged,triggered',
-        'sort_by': 'created_on:desc'
+        'sort_by': 'created_on:desc',
+        'limit': 3
     };
     _.keys(options).forEach(function(key) {
         switch (key.toString) {
@@ -63,11 +65,12 @@ pagerduty.prototype.getIncidents = function(options, services, cb) {
         }
     });
 
-    var that = this;
     // Resolve service names to ids
     this.getServiceIds(services, function(err, ids) {
-        qs.service = ids.toString();
+
         if (err) return cb(err);
+
+        qs.service = (typeof ids != 'string') ? ids.toString() : ids;
         var params = {
           url: that.url + 'incidents',
           json: true,
