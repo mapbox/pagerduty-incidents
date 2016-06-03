@@ -5,6 +5,7 @@ var request = require('request');
 var pagerduty = function(subdomain, token) {
     this.subdomain = subdomain;
     this.token = token;
+    this.url = 'https://' + subdomain + '.pagerduty.com/api/v1/';
     return this;
 };
 
@@ -68,7 +69,7 @@ pagerduty.prototype.getIncidents = function(options, services, cb) {
         qs.service = ids.toString();
         if (err) return cb(err);
         var params = {
-          url: 'https://' + that.subdomain + '.pagerduty.com/api/v1/incidents',
+          url: that.url + 'incidents',
           json: true,
           headers: {
             'Authorization': 'Token token=' + that.token,
@@ -88,7 +89,7 @@ pagerduty.prototype.getIncidents = function(options, services, cb) {
 pagerduty.prototype.getServiceIds = function(names, cb) {
     if ('string' == typeof names) names = names.split(',');
     var params = {
-        url: 'https://' + this.subdomain + '.pagerduty.com/api/v1/services',
+        url: this.url + 'services',
         json: true,
         headers: {
             'Authorization': 'Token token=' + this.token,
