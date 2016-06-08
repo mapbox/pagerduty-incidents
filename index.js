@@ -11,28 +11,6 @@ var pagerduty = function(subdomain, token) {
 
 module.exports = pagerduty;
 
-pagerduty.prototype.callApi = function (url, qs, cb) {
-    var returnObject = {};
-    var params = {
-        url: url,
-        json: true,
-        headers: {
-            'Authorization': 'Token token=' + this.token
-        },
-        qs: qs
-    };
-    console.log(params);
-    request(params, function (err, res, data) {
-        if (err) {
-            return cb(err);
-        } else if (res.statusCode !== 200) {
-            return cb(new Error('Bad status code: ' + res.statusCode));
-        } else {
-            cb(null, data);
-        }
-    });
-};
-
 pagerduty.prototype.stream = function(options, services, interval) {
     var that = this;
     var stream = new Readable({objectMode: true});
@@ -64,14 +42,38 @@ pagerduty.prototype.stream = function(options, services, interval) {
     return stream;
 };
 
+pagerduty.prototype.callApi = function (url, qs, cb) {
+    var returnObject = {};
+    var params = {
+        url: url,
+        json: true,
+        headers: {
+            'Authorization': 'Token token=' + this.token
+        },
+        qs: qs
+    };
+    console.log(params);
+    request(params, function (err, res, data) {
+        if (err) {
+            return cb(err);
+        } else if (res.statusCode !== 200) {
+            return cb(new Error('Bad status code: ' + res.statusCode));
+        } else {
+            cb(null, data);
+        }
+    });
+};
+
 pagerduty.prototype.getIncidentNotes = function (ID, cb) {
     var url = this.url + 'incidents/' + ID + '/notes';
     this.callApi(url, '');
 };
 
 pagerduty.prototype.getIncidents = function (options, services, cb) {
-    console.log('#### getIncidents options ', options, ' services ', services);
     var url = this.url + 'incidents/';
+
+    var that = this;
+
     var qs = {
         'status': 'acknowledged,triggered',
         'sort_by': 'created_on:desc',
@@ -98,29 +100,29 @@ pagerduty.prototype.getIncidents = function (options, services, cb) {
     // Resolve service names to ids
         this.getServices(services.names, function (err, data) {
 
-            var services = data.services;
-
-            if (!services.length) {
+            if (!data['services'].length) {
                 return cb(new Error('No services found.'));
             }
 
-            var ids = _(services).reduce(function (memo, service) {
-                if (_(services.names).indexOf(service.name) !== -1) {
+            var ids = data['services'].reduce(function (memo, service) {
+                if (services.names.indexOf(service.name) !== -1) {
                     memo.push(service.id);
                 }
                 return memo;
             }, []);
 
             if (!ids.length) {
+
                 return cb(new Error('No matching services found.'));
             }
 
             if (err) return cb(err);
             qs.service = (typeof ids != 'string') ? ids.toString() : ids;
 
-            this.callApi(url, qs, cb);
+            that.callApi(url, qs, cb);
         });
     } else {
+        console.log(this);
         qs.service = (typeof services.ids != 'string') ? services.ids.toString() : services.ids;
         this.callApi(url, qs, cb);
     }
