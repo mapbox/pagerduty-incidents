@@ -1,8 +1,9 @@
+'use strict';
 var Readable = require('stream').Readable;
 var _ = require('underscore');
 var request = require('request');
 
-var pagerduty = function(subdomain, token) {
+var pagerduty = function (subdomain, token) {
     this.subdomain = subdomain;
     this.token = token;
     this.url = 'https://' + subdomain + '.pagerduty.com/api/v1/';
@@ -52,7 +53,6 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
         },
         qs: qs
     };
-    console.log(params);
     request(params, function (err, res, data) {
         if (err) {
             return cb(err);
@@ -87,9 +87,9 @@ pagerduty.prototype.getIncidents = function (options, services, cb) {
             }
             qs.status = options[key];
             break;
-        // case 'incident_key':
-        //     qs.incident_key = options[key];
-        //     break;
+        case 'incident_key':
+            qs.incident_key = options[key];
+            break;
         case 'sort_by':
             qs.sort_by = options[key];
             break;
@@ -99,8 +99,7 @@ pagerduty.prototype.getIncidents = function (options, services, cb) {
     if (services.names) {
     // Resolve service names to ids
         this.getServices(services.names, function (err, data) {
-
-            if (!data['services'].length) {
+            if (!data.services.length) {
                 return cb(new Error('No services found.'));
             }
 
@@ -122,7 +121,6 @@ pagerduty.prototype.getIncidents = function (options, services, cb) {
             that.callApi(url, qs, cb);
         });
     } else {
-        console.log(this);
         qs.service = (typeof services.ids != 'string') ? services.ids.toString() : services.ids;
         this.callApi(url, qs, cb);
     }
