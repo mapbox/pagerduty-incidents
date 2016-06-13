@@ -12,7 +12,7 @@ var pagerduty = function (subdomain, token) {
 
 module.exports = pagerduty;
 
-pagerduty.prototype.stream = function(options, services, interval) {
+pagerduty.prototype.stream = function (options, services, interval) {
     var that = this;
     var stream = new Readable({objectMode: true});
     var seen = {};
@@ -25,7 +25,7 @@ pagerduty.prototype.stream = function(options, services, interval) {
 
     var query = function () {
         calling = true;
-        that.getIncidents(options, services, function(err, data) {
+        that.getIncidents(options, services, function (err, data) {
             var incidents = data.incidents;
             if (err) return stream.emit('error', err);
             for (var i = 0; i < incidents.length; i++) {
@@ -44,7 +44,6 @@ pagerduty.prototype.stream = function(options, services, interval) {
 };
 
 pagerduty.prototype.callApi = function (url, qs, cb) {
-    var returnObject = {};
     var params = {
         url: url,
         json: true,
@@ -53,6 +52,7 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
         },
         qs: qs
     };
+    // console.log(params);
     request(params, function (err, res, data) {
         if (err) {
             return cb(err);
