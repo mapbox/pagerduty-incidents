@@ -69,7 +69,7 @@ pagerduty.prototype.getIncidentNotes = function (ID, cb) {
     this.callApi(url, '');
 };
 
-pagerduty.prototype.getIncidents = function (options, services, cb) {
+pagerduty.prototype.getIncidents = function (options, cb) {
     var url = this.url + 'incidents/';
 
     var that = this;
@@ -96,15 +96,15 @@ pagerduty.prototype.getIncidents = function (options, services, cb) {
         }
     });
 
-    if (services.names) {
+    if (options.services.names) {
     // Resolve service names to ids
-        this.getServices(services.names, function (err, data) {
+        this.getServices(options.services.names, function (err, data) {
             if (!data.services.length) {
                 return cb(new Error('No services found.'));
             }
 
             var ids = data['services'].reduce(function (memo, service) {
-                if (services.names.indexOf(service.name) !== -1) {
+                if (options.services.names.indexOf(service.name) !== -1) {
                     memo.push(service.id);
                 }
                 return memo;
@@ -121,7 +121,7 @@ pagerduty.prototype.getIncidents = function (options, services, cb) {
             that.callApi(url, qs, cb);
         });
     } else {
-        qs.service = (typeof services.ids != 'string') ? services.ids.toString() : services.ids;
+        qs.service = (typeof options.services.ids != 'string') ? options.services.ids.toString() : options.services.ids;
         this.callApi(url, qs, cb);
     }
 };
