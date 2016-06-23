@@ -66,7 +66,15 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
 
 pagerduty.prototype.getIncidentNotes = function (ID, cb) {
     var url = this.url + 'incidents/' + ID + '/notes';
-    this.callApi(url, '', cb);
+    this.callApi(url, '', function (err, data) {
+        if (err) {
+            console.log(err);
+            cb(err);
+        } else {
+            cb(null, data);
+        }
+    });
+
 };
 
 pagerduty.prototype.getIncidents = function (options, cb) {
