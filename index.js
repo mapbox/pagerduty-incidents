@@ -52,7 +52,6 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
         },
         qs: qs
     };
-    // console.log(params);
     request(params, function (err, res, data) {
         if (err) {
             return cb(err);
@@ -119,7 +118,6 @@ pagerduty.prototype.getIncidents = function (options, cb) {
             }, []);
 
             if (!ids.length) {
-
                 return cb(new Error('No matching services found.'));
             }
 
