@@ -1,12 +1,11 @@
 'use strict';
 var Readable = require('stream').Readable;
-var _ = require('underscore');
 var request = require('request');
 
-var pagerduty = function (subdomain, token) {
+var pagerduty = function (subdomain, token, url) {
     this.subdomain = subdomain;
     this.token = token;
-    this.url = 'https://' + subdomain + '.pagerduty.com/api/v1/';
+    this.url = url;
     return this;
 };
 
@@ -86,7 +85,7 @@ pagerduty.prototype.getIncidents = function (options, cb) {
         'sort_by': 'created_on:desc',
         'limit': 3
     };
-    _.keys(options).forEach(function (key) {
+    Object.keys(options).forEach(function (key) {
         switch (key.toString) {
         case 'status':
             if (typeof options[key] != 'string') {
