@@ -81,9 +81,9 @@ pagerduty.prototype.getIncidents = function (options, cb) {
     var that = this;
 
     var qs = {
-        'status': 'acknowledged,triggered',
+        'status': 'acknowledged,triggered,resolved',
         'sort_by': 'created_on:desc',
-        'limit': 3
+        'limit': 100
     };
     Object.keys(options).forEach(function (key) {
         switch (key.toString) {
@@ -108,7 +108,6 @@ pagerduty.prototype.getIncidents = function (options, cb) {
             if (!data.services.length) {
                 return cb(new Error('No services found.'));
             }
-
             var ids = data['services'].reduce(function (memo, service) {
                 if (options.services.names.indexOf(service.name) !== -1) {
                     memo.push(service.id);
@@ -122,7 +121,6 @@ pagerduty.prototype.getIncidents = function (options, cb) {
 
             if (err) return cb(err);
             qs.service = (typeof ids != 'string') ? ids.toString() : ids;
-
             that.callApi(url, qs, cb);
         });
     } else {
