@@ -62,8 +62,8 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
     });
 };
 
-pagerduty.prototype.getIncidentNotes = function (ID, cb) {
-    var url = this.url + 'incidents/' + ID + '/notes';
+pagerduty.prototype.getIncidentNotes = function (id, cb) {
+    var url = this.url + 'incidents/' + id + '/notes';
     this.callApi(url, '', function (err, data) {
         if (err) {
             console.log(err);
