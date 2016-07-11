@@ -2,8 +2,7 @@
 var Readable = require('stream').Readable;
 var request = require('request');
 
-var pagerduty = function (subdomain, token, url) {
-    this.subdomain = subdomain;
+var pagerduty = function (token, url) {
     this.token = token;
     this.url = url;
     return this;
@@ -77,7 +76,6 @@ pagerduty.prototype.getIncidentNotes = function (id, cb) {
 
 pagerduty.prototype.getIncidents = function (options, cb) {
     var url = this.url + 'incidents/';
-
     var that = this;
 
     var qs = {
