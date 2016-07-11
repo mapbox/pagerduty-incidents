@@ -103,9 +103,6 @@ pagerduty.prototype.getIncidents = function (options, cb) {
     if (options.services.names) {
     // Resolve service names to ids
         this.getServices(function (err, data) {
-            if (!data.services.length) {
-                return cb(new Error('No services found.'));
-            }
             var ids = data['services'].reduce(function (memo, service) {
                 if (options.services.names.indexOf(service.name) !== -1) {
                     memo.push(service.id);
