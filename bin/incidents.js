@@ -31,5 +31,4 @@ var EventStream = pd.stream({limit: 100, services: {names: 'service A'}}, 10000)
         console.log(error);
     })
     .on('end', function () {
-        console.log('got end');
     });
