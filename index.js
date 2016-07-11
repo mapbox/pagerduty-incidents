@@ -102,7 +102,7 @@ pagerduty.prototype.getIncidents = function (options, cb) {
 
     if (options.services.names) {
     // Resolve service names to ids
-        this.getServices(options.services.names, function (err, data) {
+        this.getServices(function (err, data) {
             if (!data.services.length) {
                 return cb(new Error('No services found.'));
             }
@@ -127,8 +127,7 @@ pagerduty.prototype.getIncidents = function (options, cb) {
     }
 };
 
-pagerduty.prototype.getServices = function (names, cb) {
-    if (typeof names === 'string') names = names.split(',');
+pagerduty.prototype.getServices = function (cb) {
     var url = this.url + 'services';
     var qs = {'limit': 100};
     this.callApi(url, qs, cb);
