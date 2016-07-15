@@ -19,15 +19,16 @@ var argv = optimist
 
 if (argv.help) return optimist.showHelp();
 
-var pd = new Pagerduty(env.subdomain, env.token);
+var pd = new Pagerduty(env.subdomain, env.token, 'https://' + env.subdomain + '.pagerduty.com/api/v1/');
 
-var EventStream = pd.stream(argv.status.split(','), argv.names.split(','), 10000)
-    .on('data', function(incident) {
+var EventStream = pd.stream({limit: 100, services: {names: 'service A'}}, 10000)
+    .on('data', function (incident) {
+        console.log('got incident');
         console.log(incident);
     })
-    .on('error', function(error) {
+    .on('error', function (error) {
+        console.log('got error');
         console.log(error);
     })
-    .on('end', function() {
-
+    .on('end', function () {
     });

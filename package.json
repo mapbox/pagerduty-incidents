@@ -3,6 +3,9 @@
   "version": "0.0.2",
   "description": "",
   "main": "index.js",
+  "scripts": {
+    "test": "node test/*.test.js"
+  },
   "bin": {
     "pagerduty-incidents": "./bin/incidents.js"
   },
@@ -13,9 +16,11 @@
   "author": "Mapbox",
   "license": "BSD",
   "dependencies": {
+    "express": "^4.14.0",
     "optimist": "~0.6.0",
-    "underscore": "~1.5.2",
+    "request": "2.34.0",
     "superenv": "0.0.1",
-    "request": "2.34.0"
+    "tape": "^4.6.0",
+    "underscore": "~1.5.2"
   }
 }

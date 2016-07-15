@@ -1,34 +1,35 @@
+'use strict';
 var Readable = require('stream').Readable;
-var _ = require('underscore');
 var request = require('request');
 
-var pagerduty = function(subdomain, token) {
-    this.subdomain = subdomain;
+var pagerduty = function (token, url) {
     this.token = token;
+    this.url = url;
     return this;
 };
 
 module.exports = pagerduty;
 
-pagerduty.prototype.stream = function(status, services, interval) {
+pagerduty.prototype.stream = function (options, interval) {
     var that = this;
     var stream = new Readable({objectMode: true});
     var seen = {};
     var calling = false;
 
-    stream._read = function() {
+    stream._read = function () {
         if (calling) return;
         query();
     };
 
-    var query = function() {
+    var query = function () {
         calling = true;
-        that.getIncidents(status, services, function(err, incidents) {
+        that.getIncidents(options, function (err, data) {
+            var incidents = data.incidents;
             if (err) return stream.emit('error', err);
             for (var i = 0; i < incidents.length; i++) {
                 var incident = incidents[i];
                 if (!seen[incident.id]) {
-                    stream.push(incident);
+                    stream.push(JSON.stringify(incident, null, 2));
                     seen[incident.id] = true;
                 }
             }
@@ -40,54 +41,91 @@ pagerduty.prototype.stream = function(status, services, interval) {
     return stream;
 };
 
-pagerduty.prototype.getIncidents = function(status, services, cb) {
-    if ('string' != typeof status) status = status.toString();
-    var that = this;
-    // Resolve service names to ids
-    this.getServiceIds(services, function(err, ids) {
-        if (err) return cb(err);
-        var params = {
-          url: 'https://' + that.subdomain + '.pagerduty.com/api/v1/incidents',
-          json: true,
-          headers: {
-            'Authorization': 'Token token=' + that.token,
-          },
-          qs: {
-            status: status,
-            service: ids.toString()
-          },
-        };
-        request(params, function (err, res, data) {
-            if (err) return cb(err);
-            if (res.statusCode != 200) {
-                return cb(new Error('Bad status code: ' + res.statusCode));
-            }
-            cb(null, data.incidents);
-        });
+pagerduty.prototype.callApi = function (url, qs, cb) {
+    var params = {
+        url: url,
+        json: true,
+        headers: {
+            'Authorization': 'Token token=' + this.token
+        },
+        qs: qs
+    };
+    request(params, function (err, res, data) {
+        if (err) {
+            return cb(err);
+        } else if (res.statusCode !== 200) {
+            return cb(new Error('Bad status code: ' + res.statusCode));
+        } else {
+            cb(null, data);
+        }
     });
 };
 
-pagerduty.prototype.getServiceIds = function(names, cb) {
-    if ('string' == typeof names) names = names.split(',');
-    var params = {
-        url: 'https://' + this.subdomain + '.pagerduty.com/api/v1/services',
-        json: true,
-        headers: {
-            'Authorization': 'Token token=' + this.token,
-        },
-    };
-    request(params, function (err, res, data) {
-        if (err) return cb(err);
-        if (res.statusCode != 200) {
-            return cb(new Error('Bad status code: ' + res.statusCode));
+pagerduty.prototype.getIncidentNotes = function (id, cb) {
+    var url = this.url + 'incidents/' + id + '/notes';
+    this.callApi(url, '', function (err, data) {
+        if (err) {
+            console.log(err);
+            cb(err);
+        } else {
+            cb(null, data);
         }
-        var services = data.services;
-        if (!services.length) return cb(new Error('No services found.'));
-        var ids = _(services).reduce(function(memo, service) {
-            if (_(names).indexOf(service.name) !== -1) memo.push(service.id);
-            return memo;
-        }, []);
-        if (!ids.length) return cb(new Error('No matching services found.'));
-        cb(null, ids);
     });
+
+};
+
+pagerduty.prototype.getIncidents = function (options, cb) {
+    var url = this.url + 'incidents/';
+    var that = this;
+
+    var qs = {
+        'status': 'acknowledged,triggered,resolved',
+        'sort_by': 'created_on:desc',
+        'limit': 100
+    };
+    Object.keys(options).forEach(function (key) {
+        switch (key.toString) {
+        case 'status':
+            if (typeof options[key] != 'string') {
+                options[key] = options[key].toString();
+            }
+            qs.status = options[key];
+            break;
+        case 'incident_key':
+            qs.incident_key = options[key];
+            break;
+        case 'sort_by':
+            qs.sort_by = options[key];
+            break;
+        }
+    });
+
+    if (options.services.names) {
+    // Resolve service names to ids
+        this.getServices(function (err, data) {
+            var ids = data['services'].reduce(function (memo, service) {
+                if (options.services.names.indexOf(service.name) !== -1) {
+                    memo.push(service.id);
+                }
+                return memo;
+            }, []);
+
+            if (!ids.length) {
+                return cb(new Error('No matching services found.'));
+            }
+
+            if (err) return cb(err);
+            qs.service = (typeof ids != 'string') ? ids.toString() : ids;
+            that.callApi(url, qs, cb);
+        });
+    } else {
+        qs.service = (typeof options.services.ids != 'string') ? options.services.ids.toString() : options.services.ids;
+        this.callApi(url, qs, cb);
+    }
+};
+
+pagerduty.prototype.getServices = function (cb) {
+    var url = this.url + 'services';
+    var qs = {'limit': 100};
+    this.callApi(url, qs, cb);
 };
