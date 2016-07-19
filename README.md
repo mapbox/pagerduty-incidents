@@ -6,7 +6,7 @@ As a readable stream:
 
 ```javascript
 var Pagerduty = require('pagerduty');
-var pd = new Pagerduty('myToken', http://pagerDutySubdomain.pagerduty.com/');
+var pd = new Pagerduty('myToken', 'http://pagerDutySubdomain.pagerduty.com/');
 
 var EventStream = pd.stream(['triggered'], ['ServiceA', 'ServiceB'], 10000)
     .on('data', function(incident) {
