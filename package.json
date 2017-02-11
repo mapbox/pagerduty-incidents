@@ -1,26 +1,26 @@
 {
-  "name": "pagerduty-incidents",
-  "version": "0.0.3",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "node test/*.test.js"
-  },
   "bin": {
     "pagerduty-incidents": "./bin/incidents.js"
-  },
+  }, 
+  "license": "BSD-2-Clause", 
+  "name": "pagerduty-incidents", 
   "repository": {
-    "type": "git",
-    "url": "https://github.com/mapbox/pagerduty-incidents.git"
-  },
-  "author": "Mapbox",
-  "license": "BSD",
+    "url": "https://github.com/mapbox/pagerduty-incidents.git", 
+    "type": "git"
+  }, 
+  "author": "Mapbox", 
+  "version": "0.0.3", 
   "dependencies": {
-    "express": "^4.14.0",
-    "optimist": "~0.6.0",
-    "request": "2.34.0",
-    "superenv": "0.0.1",
-    "tape": "^4.6.0",
-    "underscore": "~1.5.2"
-  }
+    "express": "^4.14.0", 
+    "request": "2.34.0", 
+    "superenv": "0.0.1", 
+    "tape": "^4.6.0", 
+    "underscore": "~1.5.2", 
+    "optimist": "~0.6.0"
+  }, 
+  "scripts": {
+    "test": "node test/*.test.js"
+  }, 
+  "main": "index.js", 
+  "description": ""
 }
