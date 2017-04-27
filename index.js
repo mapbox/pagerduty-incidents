@@ -25,6 +25,7 @@ pagerduty.prototype.stream = function (options, interval) {
         calling = true;
         that.getIncidents(options, function (err, data) {
             var incidents = data.incidents;
+            console.log(incidents)
             if (err) return stream.emit('error', err);
             for (var i = 0; i < incidents.length; i++) {
                 var incident = incidents[i];
@@ -56,6 +57,7 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
         } else if (res.statusCode !== 200) {
             return cb(new Error('Bad status code: ' + res.statusCode));
         } else {
+            console.log(data)
             cb(null, data);
         }
     });
@@ -83,8 +85,9 @@ pagerduty.prototype.getIncidents = function (options, cb) {
         'sort_by': 'created_on:desc',
         'limit': 100
     };
+
     Object.keys(options).forEach(function (key) {
-        switch (key.toString) {
+        switch (key.toString()) {
         case 'status':
             if (typeof options[key] != 'string') {
                 options[key] = options[key].toString();
