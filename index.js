@@ -83,8 +83,9 @@ pagerduty.prototype.getIncidents = function (options, cb) {
         'sort_by': 'created_on:desc',
         'limit': 100
     };
+
     Object.keys(options).forEach(function (key) {
-        switch (key.toString) {
+        switch (key.toString()) {
         case 'status':
             if (typeof options[key] != 'string') {
                 options[key] = options[key].toString();
