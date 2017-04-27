@@ -3,7 +3,7 @@
     "pagerduty-incidents": "./bin/incidents.js"
   },
   "license": "BSD-2-Clause",
-  "name": "pagerduty-incidents",
+  "name": "@mapbox/pagerduty-incidents",
   "repository": {
     "url": "https://github.com/mapbox/pagerduty-incidents.git",
     "type": "git"
