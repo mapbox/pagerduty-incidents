@@ -25,7 +25,6 @@ pagerduty.prototype.stream = function (options, interval) {
         calling = true;
         that.getIncidents(options, function (err, data) {
             var incidents = data.incidents;
-            console.log(incidents)
             if (err) return stream.emit('error', err);
             for (var i = 0; i < incidents.length; i++) {
                 var incident = incidents[i];
@@ -57,7 +56,6 @@ pagerduty.prototype.callApi = function (url, qs, cb) {
         } else if (res.statusCode !== 200) {
             return cb(new Error('Bad status code: ' + res.statusCode));
         } else {
-            console.log(data)
             cb(null, data);
         }
     });
