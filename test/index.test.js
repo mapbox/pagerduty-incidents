@@ -1,5 +1,5 @@
 'use strict';
-var PORT = 8080;
+var PORT = 3000;
 var PagerDutyModule = require('../index.js');
 var server  = require('./server.js');
 var tape = require('tape');
