@@ -1,5 +1,5 @@
 'use strict';
-var PORT = 3000;
+var PORT = 8080;
 var PagerDutyModule = require('../index.js');
 var server  = require('./server.js');
 var tape = require('tape');
@@ -40,6 +40,14 @@ tape('service does not exist', function (assert) {
 
     PagerDuty.getIncidents({limit: 100, services: {names: 'idontexist'}}, function (err) {
         assert.equal(err.message, 'No matching services found.');
+        assert.end();
+    });
+});
+
+tape('service does not exist', function (assert) {
+
+    PagerDuty.getIncidents({limit: 100, services: {names: ['food-source','idontexist']}}, function (err, incidents) {
+        assert.equal(incidents.incidents.length, 2, 'correct number of incidents found.');
         assert.end();
     });
 });
