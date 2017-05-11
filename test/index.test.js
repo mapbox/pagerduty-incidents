@@ -44,6 +44,14 @@ tape('service does not exist', function (assert) {
     });
 });
 
+tape('service does not exist', function (assert) {
+
+    PagerDuty.getIncidents({limit: 100, services: {names: ['food-source','idontexist']}}, function (err, incidents) {
+        assert.equal(incidents.incidents.length, 2, 'correct number of incidents found.');
+        assert.end();
+    });
+});
+
 tape('get notes for an incident ID', function (assert) {
 
     PagerDuty.getIncidentNotes('ABCDEFG', function (err, notes) {
